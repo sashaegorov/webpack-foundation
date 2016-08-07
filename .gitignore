@@ -1,2 +1,7 @@
+# List of ignored
+public/*
 node_modules
 .tags*
+
+# Keep this files
+!.keep
