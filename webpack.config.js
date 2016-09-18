@@ -24,7 +24,19 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loaders: ['babel-loader?presets=es2015'],
       }
+    ],
+
+    preLoaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules|bower_components/,
+        loaders: ['eslint-loader']
+      }
     ]
+  },
+
+  eslint: {
+    failOnWarning: true
   },
 
   plugins: [

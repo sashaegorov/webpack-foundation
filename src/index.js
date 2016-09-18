@@ -1,4 +1,4 @@
-let hello = require('./hello.js');
+const hello = require('./hello.js')
 
-console.log('index.js works');
-hello();
+console.log('index.js works')
+hello()
