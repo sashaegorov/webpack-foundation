@@ -1,4 +1,4 @@
-let hello = require('./app.js');
+let hello = require('./hello.js');
 
-console.log('It works!');
+console.log('index.js works');
 hello();

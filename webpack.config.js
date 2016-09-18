@@ -2,12 +2,14 @@ let HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    index: './src/index.js',
+    index: './src/index.js'
   },
+
   output: {
     filename: '[name].js',
-    path: __dirname + '/public'
+    path: __dirname + '/build'
   },
+
   module: {
     loaders: [
       {
@@ -16,6 +18,7 @@ module.exports = {
       },
     ]
   },
+
   plugins: [
       new HtmlWebpackPlugin({  // Also generate a test.html
         filename: 'index.html',
