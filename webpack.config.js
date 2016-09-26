@@ -1,5 +1,8 @@
-let webpack = require("webpack");
-let HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+const absolutePath = path.join(__dirname, 'build')
 
 module.exports = {
   entry: {
@@ -10,14 +13,14 @@ module.exports = {
 
   output: {
     filename: '[name].js',
-    path: __dirname + '/build'
+    path: absolutePath,
   },
 
   module: {
     loaders: [
       {
-        include: /\.pug/,
-        loader: 'pug-loader'
+        include: /\.pug$/,
+        loader: 'pug'
       },
       {
         test: /\.js$/,
@@ -41,7 +44,7 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({  // Also generate a test.html
-      filename: 'index.html',
+      filename: './index.html',
       template: './src/index.pug',
       inject: 'body',
       xhtml: true
