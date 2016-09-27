@@ -1,13 +1,18 @@
 doctype html
-html(lang="en")
+html(lang='en')
   head
-    meta(charset="UTF-8")
+    meta(charset='UTF-8')
     title Hello Pug!
+
   body
     h1 Pug — node template engine
+
   #container
-    p
+    - let settings = { foo: 'bar'}
+    p(data-bar)&attributes(settings)
+      strong You are amazing!
+    p(name='agreement'
+      data-foo)
       | Pug is a terse and simple templating language with a
       | strong focus
       | on performance and powerful features.
-    p You are amazing!
