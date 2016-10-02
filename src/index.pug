@@ -7,11 +7,13 @@ html(lang='en')
   body
     h1 Pug — node template engine
 
+  //- This is invisible comment
   #container
-    - let settings = { foo: 'bar'}
+    - settings = { foo: 'bar'}
     p(data-bar)&attributes(settings)
       strong You are amazing!
-    p(name='agreement'
+    // This is visible comment
+    p(foo='agreement'
       data-foo)
       | Pug is a terse and simple templating language with a
       | strong focus
