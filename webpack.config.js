@@ -13,19 +13,22 @@ module.exports = {
 
   output: {
     filename: '[name].js',
-    path: absolutePath,
+    path: absolutePath
   },
 
   module: {
     loaders: [
       {
         include: /\.pug$/,
-        loader: 'pug'
+        loader: 'pug',
+        // More:
+        // https://github.com/pugjs/pug-loader#options
+        query: { pretty: true }
       },
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
-        loaders: ['babel-loader?presets=es2015'],
+        loaders: ['babel-loader?presets=es2015']
       }
     ],
 
