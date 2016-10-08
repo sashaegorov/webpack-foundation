@@ -10,8 +10,7 @@ html(lang='en')
   //- This is invisible comment
   #container
     - settings = { foo: 'bar'}
-    p(data-bar)&attributes(settings)
-      strong You are amazing!
+    include partials/amazing.pug
     // This is visible comment
     p(foo='agreement'
       data-foo)
