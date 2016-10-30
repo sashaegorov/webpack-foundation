@@ -6,3 +6,6 @@ node_modules
 # Keep this files
 !.keep
 .idea
+
+# Node debug
+npm-debug.log
