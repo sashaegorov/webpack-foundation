@@ -1,0 +1,13 @@
+// TODO: Include SCSS-files
+
+$font-size: 3rem;
+$header-color: #22272d;
+
+body {
+  font-family: sans-serif;
+}
+
+h1 {
+  color: $header-color;
+  font-size: $font-size;
+}
