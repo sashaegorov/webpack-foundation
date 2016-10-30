@@ -1,7 +1,6 @@
 # List of ignored
 build/*
 node_modules
-.tags*
 
 # Keep this files
 !.keep
