@@ -79,5 +79,9 @@ module.exports = {
 
     // TODO: Move to production settings
     new ExtractTextPlugin('styles', 'main.css')
-  ]
+  ],
+
+  sassLoader: {
+    includePaths: [path.resolve(__dirname, 'node_modules')]
+  }
 }

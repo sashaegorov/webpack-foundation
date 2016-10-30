@@ -5,15 +5,21 @@ html(lang='en')
     title Hello Pug!
 
   body
-    h1 Pug — node template engine
+    .row
+      .small-12.columns
 
-  //- This is invisible comment
-  #container
-    - settings = { foo: 'bar'}
-    include partials/amazing.pug
-    // This is visible comment
-    p(foo='agreement'
-      data-foo)
-      | Pug is a terse and simple templating language with a
-      | strong focus
-      | on performance and powerful features.
+        h1 Pug — node template engine
+
+        //- This is invisible comment
+        #container
+          - settings = { foo: 'bar'}
+
+          include partials/amazing.pug
+
+          // This is visible comment
+          p(data-foo='agreement'
+          data-bar)
+            | Pug is a terse and simple template language with a
+            | strong focus
+            | on performance and powerful features.
+

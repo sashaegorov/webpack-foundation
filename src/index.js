@@ -1,5 +1,5 @@
 const hello = require('./hello.js')
-require('./main.scss')
+require('./styles/main.scss')
 
 console.log('index.js works')
 hello()
