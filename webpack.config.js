@@ -13,10 +13,10 @@ module.exports = {
   },
 
   output: {
-    filename: '[name].js',
-    path: absolutePath
     // Has issues with `webpack-dev-server`
-    // publicPath: assetPath
+    // publicPath: assetPath,
+    path: absolutePath,
+    filename: '[name].js'
   },
 
   module: {
@@ -26,6 +26,7 @@ module.exports = {
         loader: 'pug',
         // More:
         // https://github.com/pugjs/pug-loader#options
+        // TODO: Optimized on production
         query: { pretty: true }
       },
       {
@@ -66,22 +67,25 @@ module.exports = {
   },
 
   plugins: [
+    // Render Pug to HTML
     new HtmlWebpackPlugin({  // Also generate a test.html
-      filename: '../index.html',
+      filename: 'index.html',
       template: './src/index.pug',
       inject: 'body',
       xhtml: true
     }),
-
-    new webpack.optimize.UglifyJsPlugin({
-      compress: { warnings: false }
-    }),
-
     // TODO: Move to production settings
-    new ExtractTextPlugin('styles', 'main.css')
+    new ExtractTextPlugin('styles', 'main.css'),
+
+    // new webpack.optimize.CommonsChunkPlugin('common.js'),
+    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.AggressiveMergingPlugin()
   ],
 
   sassLoader: {
-    includePaths: [path.resolve(__dirname, 'node_modules')]
+    includePaths: [
+      path.resolve(__dirname, 'node_modules')
+    ]
   }
 }
