@@ -1,6 +1,3 @@
-@import 'foundation-sites/scss/foundation';
-
-// Simple customization:
-$global-font-size: 110%;
-
+@import '~foundation-sites/scss/foundation';
+@import 'custom.scss';
 @include foundation-everything;
