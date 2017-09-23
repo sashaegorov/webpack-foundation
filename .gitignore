@@ -8,3 +8,5 @@ node_modules
 
 # Node debug
 npm-debug.log
+
+yarn.lock
