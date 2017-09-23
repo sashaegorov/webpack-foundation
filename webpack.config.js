@@ -1,91 +1,145 @@
 const path = require('path')
-const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const buildPath = path.resolve('build')
+const PRODUCTION = process.env.NODE_ENV === 'production'
 
-const absolutePath = path.join(__dirname, 'build')
+const WebPack3 = require('webpack')
+
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: PRODUCTION ?
+    'hidden-source-map' : 'cheap-module-eval-source-map',
+  profile: true,
+  cache: true,
 
   entry: {
     index: './src/index.js'
   },
 
   output: {
-    // Has issues with `webpack-dev-server`
-    // publicPath: assetPath,
-    path: absolutePath,
-    filename: '[name].js'
+    path: buildPath,
+    filename: '[name].js',
+    pathinfo: !PRODUCTION
   },
 
   module: {
-    loaders: [
-      {
-        include: /\.pug$/,
-        loader: 'pug',
-        // More:
-        // https://github.com/pugjs/pug-loader#options
-        // TODO: Optimized on production
-        query: { pretty: true }
+    rules: [{
+        test: /\.js$/,
+        // https://github.com/babel/babel-loader#troubleshooting
+        exclude: /(node_modules|bower_components)/,
+        loaders: [{
+          loader: 'babel-loader',
+          options: {
+            presets: ['es2017']
+          }
+        }]
       },
       {
         test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        loaders: ['babel-loader?presets=es2015']
+        enforce: 'pre',
+        exclude: /node_modules|bower_components/,
+        loaders: [{
+          loader: 'eslint-loader',
+          options: {
+            failOnWarning: true
+          }
+        }]
+      },
+      {
+        // More: https://github.com/pugjs/pug-loader#options
+        test: /\.pug$/,
+        loaders: [{
+          loader: 'pug-loader',
+        }]
       },
 
       // Fonts and SVG
-      { test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
-      { test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/font-woff' },
-      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=application/octet-stream' },
-      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file' },
-      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml' },
+      {
+        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=application/font-woff'
+      }, {
+        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=application/font-woff'
+      }, {
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=application/octet-stream'
+      }, {
+        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'file'
+      }, {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=image/svg+xml'
+      },
 
-      // Foundation
+      // Sass
       {
         test: /\.scss$/,
-        exclude: [/node_modules/], // sassLoader will include node_modules explicitly
-        // Using ExtractTextPlugin:
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap!sass?sourceMap&outputStyle=expanded')
-        // Using style-loader:
-        // loaders: ['style', 'css', 'sass']
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [{
+              loader: 'css-loader',
+              options: {
+                sourceMap: !PRODUCTION
+              }
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                // https://github.com/sass/node-sass
+                outputStyle: PRODUCTION ? 'compressed' : 'expanded',
+                sourceComments: !PRODUCTION,
+                sourceMap: !PRODUCTION,
+                sourceMapContents: !PRODUCTION
+              }
+            },
+          ]
+
+        })
       }
     ],
 
-    preLoaders: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules|bower_components/,
-        loaders: ['eslint-loader']
-      }
-    ]
   },
 
-  eslint: {
-    failOnWarning: true
-  },
+  // eslint: {
+  //
+  // },
 
   plugins: [
+    // Enable debug
+    new WebPack3.LoaderOptionsPlugin({
+      debug: !PRODUCTION,
+      minimize: true
+    }),
+
     // Render Pug to HTML
-    new HtmlWebpackPlugin({  // Also generate a test.html
+    new HtmlWebpackPlugin({ // Also generate a test.html
       filename: 'index.html',
-      template: './src/index.pug',
+      template: `!!pug-loader?pretty=${!PRODUCTION}!./src/index.pug`,
       inject: 'body',
+      hash: PRODUCTION,
       xhtml: true
     }),
+
     // TODO: Move to production settings
-    new ExtractTextPlugin('styles', 'main.css'),
+    new ExtractTextPlugin('styles.css'),
+    new UglifyJSPlugin({
+      sourceMap: PRODUCTION,
+      compress: {
+        warnings: true
+      }
+    }),
 
-    // new webpack.optimize.CommonsChunkPlugin('common.js'),
-    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.AggressiveMergingPlugin()
-  ],
+    new CleanWebpackPlugin(
+      [buildPath], {
+        exclude: '.keep',
+        verbose: false
+      }
+    ),
 
-  sassLoader: {
-    includePaths: [
-      path.resolve(__dirname, 'node_modules')
-    ]
-  }
+    new WebPack3.optimize.CommonsChunkPlugin('common.js'),
+    new WebPack3.optimize.AggressiveMergingPlugin()
+  ]
 }
